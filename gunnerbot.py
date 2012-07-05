@@ -70,6 +70,15 @@ class GunnerBot(irc.IRCClient):
             phrase += "%s %s, " % (i + 1 % modn, nick)
         self.msg(self.factory.channel, phrase)
 
+    @staticmethod
+    def agreement(question, nick):
+        import sha
+        digest = sha.sha(question.lower()).digest() + sha.sha(nick).digest()
+        digest = sha.sha(digest).hexdigest()
+        seed = int(digest[-8:], 16)
+        r = random.Random(seed)
+        return r.uniform(0, 100)
+
     def agreement_scale(self, nicklist, msg):
         question = msg.split("question:")[-1].strip()
 
@@ -78,22 +87,9 @@ class GunnerBot(irc.IRCClient):
         phrase += "(100%), people that disagree on the other (0%). "
         self.msg(self.factory.channel, phrase)
 
-        phrase = ""
-        agreements = {}
-        for nick in nicklist:
-            import sha
-            digest = sha.sha(question.lower()).digest() + sha.sha(nick).digest()
-            digest = sha.sha(digest).digest()
-            val = (ord(digest[-1]) + ord(digest[-2])) % 100
-
-            if val not in agreements.keys():
-                agreements[val] = []
-            agreements[val].append(nick)
-
-        for percent, nicks in agreements.items():
-            # Sort them in the right order
-            for nick in nicks:
-                phrase += "%s %s%%, " % (nick, percent)
+        agreements = [(nick, self.agreement(question, nick)) for nick in nicklist]
+        agreements.sort(key = lambda x: x[1], reverse=True)
+        phrase = ", ".join("%s %.1f%%" % (nick, pct) for (nick, pct) in agreements)
 
         self.msg(self.factory.channel, phrase)
 
