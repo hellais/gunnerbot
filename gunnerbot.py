@@ -103,7 +103,7 @@ class GunnerBot(irc.IRCClient):
                 if key in msg:
                     self.names(self.factory.channel).addCallback(getattr(self,
                         self.sub_commands.get(key)), msg)
-                return
+                    return
             prefix = "%s: " % (user.split('!', 1)[0], )
             phrase = get_random_word()
             if "%s" in phrase:
