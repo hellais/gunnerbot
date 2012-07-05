@@ -62,12 +62,14 @@ class GunnerBot(irc.IRCClient):
         print "Joined %s." % (channel,)
 
     def groups_divide(self, nicklist, msg):
-        modn = len(nicklist)/4 + 1
-        phrase = "Let's divide into %s groups of 4" % modn
+        sz = 4
+        num_groups = (len(nicklist) - 1) / sz + 1
+        if num_groups == 1:
+            phrase = "Let's divide into %d group of %d" % (num_groups, sz)
+        else:
+            phrase = "Let's divide into %d groups of %d" % (num_groups, sz)
         self.msg(self.factory.channel, phrase)
-        phrase = ""
-        for i, nick in enumerate(nicklist):
-            phrase += "%s %s, " % (i + 1 % modn, nick)
+        phrase = ", ".join("%d %s" % ((i % num_groups) + 1, nick) for i, nick in enumerate(nicklist))
         self.msg(self.factory.channel, phrase)
 
     @staticmethod
