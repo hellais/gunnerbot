@@ -82,7 +82,6 @@ class GunnerBot(irc.IRCClient):
     def agreement_scale(self, nicklist, msg):
         question = msg.split("question:")[-1].strip()
 
-        phrase = "The question is \"%s\". " % question
         phrase = "People that agree completely will go to that end of the room "
         phrase += "(100%), people that disagree on the other (0%). "
         self.msg(self.factory.channel, phrase)
