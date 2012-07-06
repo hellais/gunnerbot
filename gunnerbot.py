@@ -110,7 +110,8 @@ class GunnerBot(irc.IRCClient):
 
         for key in self.commands.keys():
             if key in msg:
-                self.names(self.factory.channel).addCallback(getattr(self, self.commands.get(key)))
+                self.names(self.factory.channel).addCallback(getattr(self,
+                    self.commands.get(key)), msg)
 
 
 class GunnerBotFactory(protocol.ClientFactory):
